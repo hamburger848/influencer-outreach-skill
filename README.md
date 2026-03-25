@@ -1,63 +1,68 @@
-# KOL Workflow - 达人投放管理系统
+# KOL Workflow - AI Agent Skill for KOL Marketing Automation
 
-一套完整的KOL达人投放工作流，从产品分析到达人建联全流程自动化。
+<div align="center">
 
-## 项目简介
+**一个可被AI Agent直接调用的KOL达人投放管理Skill**
 
-KOL Workflow 是一个自动化的KOL（Key Opinion Leader）达人投放管理系统，帮助品牌方高效地完成达人营销全流程。系统支持从产品话题生成、达人搜索、评分筛选、联系方式提取、建联话术生成到邮件发送的完整工作流。
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 核心功能
+[English](#english) | [中文](#中文)
 
-### 🎯 完整工作流
+</div>
 
-1. **生成产品话题关键词** - 根据产品特点智能生成搜索关键词
-2. **搜索达人并爬取数据** - 使用TikHub API搜索TikTok达人并获取详细数据
-3. **评分筛选达人** - 8维度加权评分，智能确定投放优先级
-4. **提取联系方式** - 从达人签名中智能提取邮箱、Instagram、WhatsApp等
-5. **生成建联话术** - 基于达人数据生成个性化邀约话术
-6. **发送邮件** - 通过Playwright自动化发送Gmail邮件
+---
 
-### 📊 8维度评分系统
+<a name="中文"></a>
 
-- 体量权重（粉丝数与播放量关系）
-- 数据质量（播放稳定性、变异系数）
-- 爆款识别
-- 性价比分析（CPM计算）
-- 趋势分析
-- 内容匹配度
-- 互动率评估
+## 🤖 什么是 Agent Skill？
 
-## 技术栈
+这是一个专为AI Agent设计的**可执行技能包**。当你在支持Skill的AI助手（如Trae IDE）中使用时，Agent可以：
 
-- **Python 3.8+**
-- **TikHub API** - TikTok数据获取
-- **OpenAI API** - 智能话术生成
-- **Playwright** - Gmail自动化
-- **Pandas/OpenPyXL** - 数据处理
+- ✅ **自动理解用户意图** - 通过决策树判断用户需要哪个步骤
+- ✅ **自动执行完整流程** - 从产品分析到达人建联全自动化
+- ✅ **智能环境配置** - 自动检查并引导配置环境变量
+- ✅ **调用Python脚本** - 直接执行搜索、评分、提取、发送等操作
 
-## 安装
+## 🎯 Skill 能做什么？
 
-### 1. 克隆仓库
+当用户说：
+- "帮我找一些美妆达人" → Agent自动执行步骤1-2
+- "给这些达人评分" → Agent执行步骤3
+- "提取联系方式并发邮件" → Agent执行步骤4-6
+- "帮我做达人投放" → Agent执行完整流程（步骤0-6）
+
+## 📋 完整工作流
+
+```
+步骤0: 环境变量检查 → 引导配置API密钥
+步骤1: 生成话题关键词 → 基于产品信息
+步骤2: 搜索达人爬取数据 → TikHub API
+步骤3: 评分筛选达人 → 8维度评分系统
+步骤4: 提取联系方式 → LLM智能提取
+步骤5: 生成建联话术 → 个性化话术
+步骤6: 发送邮件 → Gmail自动化
+```
+
+## 🚀 快速开始
+
+### 1. 安装为 Skill
+
+将此项目克隆到你的AI助手Skill目录：
 
 ```bash
+# 对于 Trae IDE
 git clone https://github.com/hamburger848/kol-workflow.git
-cd kol-workflow
+# 将 kol-workflow 文件夹放入 .trae/skills/ 目录
 ```
 
-### 2. 安装依赖
+### 2. 配置环境变量
 
-```bash
-pip install -r requirements.txt
-playwright install chromium
-```
-
-### 3. 配置环境变量
-
-创建 `.env` 文件并配置以下环境变量：
+Agent会自动引导你配置，或手动创建 `.env` 文件：
 
 ```env
-TIKHUB_API_KEY=your_tikhub_api_key
-OPENAI_API_KEY=your_openai_api_key
+TIKHUB_API_KEY=your_tikhub_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 DEFAULT_OUTPUT_PATH=assets/outputs/KOL达人评分最终报告.xlsx
 PRODUCT_INFO_FILE=references/产品信息.md
 SCRIPT_STRATEGY_FILE=references/邀约话术.md
@@ -68,48 +73,32 @@ GMAIL_AUTH_STATE=gmail_auth_state.json
 - TikHub API: https://tikhub.io
 - OpenAI API: https://platform.openai.com
 
-## 使用方法
+### 3. 安装依赖
 
-### 快速开始
-
-```python
-from scripts.search.tikhub_client import TikHubClient
-from scripts.analyze.anaylze_kol_v2 import run_kol_analysis
-from scripts.outreach.extract_email import extract_contact_with_ai
-import os
-
-output_path = os.getenv("DEFAULT_OUTPUT_PATH")
-
-# 步骤1: 搜索达人
-client = TikHubClient()
-users = client.search_tiktok_users(keyword="skincare", output_path=output_path)
-
-# 步骤2: 爬取达人数据
-for user in users:
-    client.fetch_kol_play_data(sec_uid=user["sec_uid"], output_path=output_path)
-
-# 步骤3: 评分筛选
-run_kol_analysis(output_path)
-
-# 步骤4: 提取联系方式
-extract_contact_with_ai(output_path)
+```bash
+pip install -r requirements.txt
+playwright install chromium
 ```
 
-### 发送邮件
+### 4. 开始使用
 
-```python
-from scripts.outreach.playwright_gmail_sender import GmailAutoSender
+直接告诉AI Agent你的需求：
 
-sender = GmailAutoSender(auth_state_path="gmail_auth_state.json")
-sender.login()  # 首次运行需要登录
-sender.send_from_excel(delay=30)  # 发送间隔30秒
+```
+用户: "帮我找一些护肤达人并评分"
+Agent: [自动执行步骤1-3，生成报告]
+
+用户: "给高优先级达人发邮件"
+Agent: [自动执行步骤4-6，发送邮件]
 ```
 
-## 项目结构
+## 📁 项目结构
 
 ```
 kol-workflow/
-├── scripts/                    # 核心代码
+├── SKILL.md                    # ⭐ Agent Skill定义文件
+│                               # 包含决策树、步骤说明、代码示例
+├── scripts/                    # 可执行的Python脚本
 │   ├── search/
 │   │   └── tikhub_client.py    # TikHub API客户端
 │   ├── analyze/
@@ -117,75 +106,347 @@ kol-workflow/
 │   └── outreach/
 │       ├── extract_email.py           # 联系方式提取
 │       ├── generate_script.py         # 话术生成
-│       ├── playwright_gmail_sender.py # Gmail自动发送
-│       ├── budget_tracker.py          # 预算跟踪
-│       └── contact_tracker.py         # 联系人管理
-├── references/                # 配置文件
-│   ├── 产品信息.md           # 产品信息模板
-│   └── 邀约话术.md          # 话术策略模板
-├── requirements.txt           # Python依赖
-└── README.md
+│       └── playwright_gmail_sender.py # Gmail自动发送
+├── references/                 # 配置文件
+│   ├── 产品信息.md            # 产品信息模板
+│   └── 邀约话术.md           # 话术策略模板
+└── requirements.txt            # Python依赖
 ```
 
-## 核心模块说明
+## 🔧 SKILL.md 核心机制
 
-### TikHub Client (`tikhub_client.py`)
+`SKILL.md` 是Agent的"大脑"，包含：
 
-TikHub API客户端，支持：
-- 搜索TikTok达人
-- 获取达人详细数据
-- 爬取视频播放数据
-- 自动重试和错误处理
+### 1. Skill 元数据
 
-### KOL Analyzer (`anaylze_kol_v2.py`)
+```yaml
+name: "kol-workflow"
+description: "KOL达人投放管理工作流 - 从产品话题生成到达人建联发送的完整流程"
+```
 
-8维度评分系统，包括：
-- 体量权重评分
-- 数据质量评估
-- 爆款识别
-- CPM性价比计算
-- 趋势分析
-- 内容匹配度
-- 互动率评估
+### 2. 决策树
 
-### Gmail Sender (`playwright_gmail_sender.py`)
+Agent通过决策树判断用户意图：
 
-自动化邮件发送：
-- Playwright浏览器自动化
-- Gmail登录状态保存
-- 批量邮件发送
-- 可配置发送间隔
+```
+用户需求是什么？
+├─ 没有明确指定 → 执行全流程
+├─ 我只需要某个步骤 → 执行对应步骤
+└─ 我不知道在哪一步 → 查看数据文件状态
+```
 
-## 最佳实践
+### 3. 步骤定义
 
-1. **关键词优化** - 步骤1的话题关键词要精准，直接影响达人搜索质量
-2. **API限流** - 步骤2爬取数据时注意API调用频率，避免被限流
-3. **优先级排序** - 步骤3评分后优先处理"高"优先级达人
-4. **话术定制** - 步骤5话术可根据品牌特点调整模板
-5. **发送测试** - 步骤6发送前先测试登录是否成功
+每个步骤包含：
+- 执行方式说明
+- Python代码示例
+- 输入输出说明
+- 环境变量引用
 
-## 常见问题
+### 4. 最佳实践与陷阱
 
-### 评分显示"数据不足"
-确保每个达人至少有3个有效播放数据
+Agent会自动避免常见错误，遵循最佳实践。
 
-### CPM报价不知道是否合理
-计算 CPM = 报价 ÷ (平均播放 ÷ 1000)，CPM ≤ 15 为合理
+## 💡 使用场景
 
-### Gmail发送失败
-先运行 `--login` 重新登录，确保Playwright浏览器已安装
+### 场景1：新品推广
 
-### 邮箱提取不到
-确认达人signature中确实包含联系方式
+```
+用户: "我们新出了一款面膜，帮我找达人推广"
+Agent: 
+  1. 询问产品信息并保存到 references/产品信息.md
+  2. 生成关键词：#facemask #skincare #beauty
+  3. 搜索达人并爬取数据
+  4. 8维度评分筛选
+  5. 提取联系方式
+  6. 生成个性化话术
+  7. 发送邮件
+```
 
-## 贡献
+### 场景2：达人筛选
+
+```
+用户: "帮我从已有的达人列表中筛选高性价比的"
+Agent:
+  1. 读取现有Excel文件
+  2. 执行步骤3评分分析
+  3. 筛选出高优先级达人
+  4. 生成建议报价
+```
+
+### 场景3：批量建联
+
+```
+用户: "给这些达人发邮件"
+Agent:
+  1. 提取联系方式（步骤4）
+  2. 生成话术（步骤5）
+  3. 发送邮件（步骤6）
+```
+
+## 🎨 8维度评分系统
+
+Agent使用智能评分系统评估达人：
+
+1. **体量权重** - 粉丝数与播放量关系
+2. **数据质量** - 播放稳定性、变异系数
+3. **爆款识别** - 识别爆款视频
+4. **性价比分析** - CPM计算
+5. **趋势分析** - 上升/下降趋势
+6. **内容匹配度** - 与产品相关性
+7. **互动率评估** - 点赞评论率
+8. **综合评分** - 加权总分
+
+## 🛠️ 技术栈
+
+- **Python 3.8+** - 核心语言
+- **TikHub API** - TikTok数据获取
+- **OpenAI API** - LLM智能处理
+- **Playwright** - 浏览器自动化
+- **Pandas/OpenPyXL** - 数据处理
+
+## 📝 开发新的 Agent Skill
+
+如果你想开发自己的Agent Skill，参考本项目结构：
+
+1. 创建 `SKILL.md` 文件，定义：
+   - Skill名称和描述
+   - 决策树逻辑
+   - 步骤说明和代码示例
+   - 最佳实践
+
+2. 编写可执行的Python脚本
+
+3. 提供配置文件模板
+
+## 🤝 贡献
 
 欢迎提交Issue和Pull Request！
 
-## 许可证
+## 📄 许可证
 
 MIT License
 
-## 联系方式
+---
 
-如有问题或建议，请通过GitHub Issues联系。
+<a name="english"></a>
+
+## 🤖 What is an Agent Skill?
+
+This is an **executable skill package** designed for AI Agents. When used in AI assistants that support Skills (like Trae IDE), the Agent can:
+
+- ✅ **Automatically understand user intent** - Via decision tree logic
+- ✅ **Execute complete workflows** - From product analysis to influencer outreach
+- ✅ **Smart environment configuration** - Auto-check and guide environment setup
+- ✅ **Call Python scripts** - Directly execute search, scoring, extraction, and sending
+
+## 🎯 What Can the Skill Do?
+
+When users say:
+- "Find me some beauty influencers" → Agent executes steps 1-2
+- "Score these influencers" → Agent executes step 3
+- "Extract contacts and send emails" → Agent executes steps 4-6
+- "Help me with influencer marketing" → Agent executes full workflow (steps 0-6)
+
+## 📋 Complete Workflow
+
+```
+Step 0: Environment Check → Guide API key configuration
+Step 1: Generate Keywords → Based on product info
+Step 2: Search & Crawl → TikHub API
+Step 3: Score & Filter → 8-dimension scoring
+Step 4: Extract Contacts → LLM smart extraction
+Step 5: Generate Scripts → Personalized outreach
+Step 6: Send Emails → Gmail automation
+```
+
+## 🚀 Quick Start
+
+### 1. Install as Skill
+
+Clone this project to your AI assistant's Skill directory:
+
+```bash
+# For Trae IDE
+git clone https://github.com/hamburger848/kol-workflow.git
+# Place kol-workflow folder in .trae/skills/ directory
+```
+
+### 2. Configure Environment
+
+Agent will guide you, or manually create `.env` file:
+
+```env
+TIKHUB_API_KEY=your_tikhub_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+DEFAULT_OUTPUT_PATH=assets/outputs/KOL达人评分最终报告.xlsx
+PRODUCT_INFO_FILE=references/产品信息.md
+SCRIPT_STRATEGY_FILE=references/邀约话术.md
+GMAIL_AUTH_STATE=gmail_auth_state.json
+```
+
+**Get API Keys:**
+- TikHub API: https://tikhub.io
+- OpenAI API: https://platform.openai.com
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+playwright install chromium
+```
+
+### 4. Start Using
+
+Just tell the AI Agent what you need:
+
+```
+User: "Find me skincare influencers and score them"
+Agent: [Auto executes steps 1-3, generates report]
+
+User: "Send emails to high-priority influencers"
+Agent: [Auto executes steps 4-6, sends emails]
+```
+
+## 📁 Project Structure
+
+```
+kol-workflow/
+├── SKILL.md                    # ⭐ Agent Skill definition file
+│                               # Contains decision tree, steps, code examples
+├── scripts/                    # Executable Python scripts
+│   ├── search/
+│   │   └── tikhub_client.py    # TikHub API client
+│   ├── analyze/
+│   │   └── anaylze_kol_v2.py  # 8-dimension scoring
+│   └── outreach/
+│       ├── extract_email.py           # Contact extraction
+│       ├── generate_script.py         # Script generation
+│       └── playwright_gmail_sender.py # Gmail automation
+├── references/                 # Configuration files
+│   ├── 产品信息.md            # Product info template
+│   └── 邀约话术.md           # Script strategy template
+└── requirements.txt            # Python dependencies
+```
+
+## 🔧 SKILL.md Core Mechanism
+
+`SKILL.md` is the Agent's "brain", containing:
+
+### 1. Skill Metadata
+
+```yaml
+name: "kol-workflow"
+description: "KOL influencer marketing workflow - complete process from product topic generation to influencer outreach"
+```
+
+### 2. Decision Tree
+
+Agent determines user intent via decision tree:
+
+```
+What does the user need?
+├─ Not specified → Execute full workflow
+├─ Need specific step → Execute that step
+└─ Don't know progress → Check data file status
+```
+
+### 3. Step Definitions
+
+Each step includes:
+- Execution instructions
+- Python code examples
+- Input/output specifications
+- Environment variable references
+
+### 4. Best Practices & Pitfalls
+
+Agent automatically avoids common errors and follows best practices.
+
+## 💡 Use Cases
+
+### Case 1: New Product Launch
+
+```
+User: "We launched a new face mask, help me find influencers"
+Agent: 
+  1. Ask for product info and save to references/产品信息.md
+  2. Generate keywords: #facemask #skincare #beauty
+  3. Search influencers and crawl data
+  4. 8-dimension scoring and filtering
+  5. Extract contact information
+  6. Generate personalized scripts
+  7. Send emails
+```
+
+### Case 2: Influencer Filtering
+
+```
+User: "Help me filter cost-effective influencers from existing list"
+Agent:
+  1. Read existing Excel file
+  2. Execute step 3 scoring analysis
+  3. Filter high-priority influencers
+  4. Generate suggested pricing
+```
+
+### Case 3: Batch Outreach
+
+```
+User: "Send emails to these influencers"
+Agent:
+  1. Extract contacts (step 4)
+  2. Generate scripts (step 5)
+  3. Send emails (step 6)
+```
+
+## 🎨 8-Dimension Scoring System
+
+Agent uses intelligent scoring to evaluate influencers:
+
+1. **Volume Weight** - Follower vs view relationship
+2. **Data Quality** - View stability, coefficient of variation
+3. **Viral Detection** - Identify viral videos
+4. **Cost-Effectiveness** - CPM calculation
+5. **Trend Analysis** - Upward/downward trends
+6. **Content Match** - Product relevance
+7. **Engagement Rate** - Like/comment rates
+8. **Overall Score** - Weighted total
+
+## 🛠️ Tech Stack
+
+- **Python 3.8+** - Core language
+- **TikHub API** - TikTok data retrieval
+- **OpenAI API** - LLM intelligent processing
+- **Playwright** - Browser automation
+- **Pandas/OpenPyXL** - Data processing
+
+## 📝 Develop Your Own Agent Skill
+
+To develop your own Agent Skill, reference this project structure:
+
+1. Create `SKILL.md` file defining:
+   - Skill name and description
+   - Decision tree logic
+   - Step instructions and code examples
+   - Best practices
+
+2. Write executable Python scripts
+
+3. Provide configuration file templates
+
+## 🤝 Contributing
+
+Issues and Pull Requests are welcome!
+
+## 📄 License
+
+MIT License
+
+---
+
+<div align="center">
+
+**Made with ❤️ for AI Agent Automation**
+
+</div>
