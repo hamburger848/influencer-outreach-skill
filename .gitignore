@@ -47,3 +47,9 @@ assets/data/*.xlsx
 
 # Gmail auth state
 gmail_auth_state.json
+
+# Sensitive business information
+references/产品信息.md
+references/邀约话术.md
+references/*.md
+!references/.gitkeep
