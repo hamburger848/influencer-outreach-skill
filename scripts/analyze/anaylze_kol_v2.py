@@ -2,6 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ======================【1】核心配置（可自由修改）======================
 # 权重配置（所有加分都在这里，支持不同场景快速切换）
@@ -224,8 +227,8 @@ def calculate_total_score(row):
 
 # ======================【6】主流程：一键运行======================
 def run_kol_analysis(file_path=DEFAULT_OUTPUT_PATH):
-    print(f"🔍 开始分析 KOL 达人数据...")
-    df = pd.read_excel(file_path, encoding="utf-8-sig")
+    print("开始分析 KOL 达人数据...")
+    df = pd.read_excel(file_path)
 
     df["联系方式"] = df["signature"].apply(extract_contact)
 
@@ -272,7 +275,7 @@ def run_kol_analysis(file_path=DEFAULT_OUTPUT_PATH):
     # 输出（追加模式）
     with pd.ExcelWriter(file_path, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
         df.to_excel(writer, sheet_name='评分结果', index=False)
-    print(f"✅ 分析完成！评分结果已追加到 {file_path}")
+    print(f"分析完成！评分结果已追加到 {file_path}")
     return df
 
 

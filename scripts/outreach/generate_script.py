@@ -100,13 +100,15 @@ def generate_script(kol_name, excel_path=None, save=True):
         excel_path = DATA_DIR / 'KOL达人评分最终报告.xlsx'
 
     df = pd.read_excel(excel_path)
-    kol = df[df['达人昵称'] == kol_name]
 
-    if len(kol) == 0:
+    mask = df['达人昵称'] == kol_name
+    kol_rows = df[mask]
+
+    if len(kol_rows) == 0:
         print(f"❌ Creator not found: {kol_name}")
         return
 
-    kol = kol.iloc[0]
+    kol = kol_rows.iloc[0]
     fans = kol['粉丝数']
     avg_play = kol['平均播放_清洗后']
     price = kol.get('建议中位价', 0)
@@ -130,8 +132,8 @@ def generate_script(kol_name, excel_path=None, save=True):
     print(script_text)
 
     if save:
-        idx = kol.name
-        df.at[idx, '话术'] = script_text
+        row_idx = kol_rows.index[0]
+        df.loc[row_idx, '话术'] = script_text
         df.to_excel(excel_path, index=False)
         print("\n✅ Script saved to Excel")
 
@@ -162,13 +164,15 @@ def batch_generate(excel_path=None, top_n=3, save=True):
     print("="*80)
 
     saved_count = 0
-    for idx, row in top_kols.iterrows():
+    for _, row in top_kols.iterrows():
+        kol_name = row['达人昵称']
         print("\n")
-        generate_script(row['达人昵称'], excel_path, save=False)
+        generate_script(kol_name, excel_path, save=False)
         print("\n" + "="*80 + "\n")
 
         script_text = build_script_text(row)
-        df.at[idx, '话术'] = script_text
+        mask = df['达人昵称'] == kol_name
+        df.loc[mask, '话术'] = script_text
         saved_count += 1
 
     if save:
