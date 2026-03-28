@@ -38,8 +38,11 @@
 步骤0: 环境变量检查 → 引导配置API密钥
 步骤1: 生成话题关键词 → 基于产品信息
 步骤2: 搜索达人爬取数据 → TikHub API
+       ├─ 方案A: 关键词搜索达人
+       └─ 方案B: 同类达人扩展
+       └─ 获取用户完整信息(含linktree)
 步骤3: 评分筛选达人 → 8维度评分系统
-步骤4: 提取联系方式 → LLM智能提取
+步骤4: 提取联系方式 → LLM智能提取(含linktree)
 步骤5: 生成建联话术 → 个性化话术
 步骤6: 发送邮件 → Gmail自动化
 ```
@@ -257,8 +260,11 @@ When users say:
 Step 0: Environment Check → Guide API key configuration
 Step 1: Generate Keywords → Based on product info
 Step 2: Search & Crawl → TikHub API
+        ├─ Plan A: Keyword search
+        └─ Plan B: Similar influencer expansion
+        └─ Get full profile (including linktree)
 Step 3: Score & Filter → 8-dimension scoring
-Step 4: Extract Contacts → LLM smart extraction
+Step 4: Extract Contacts → LLM smart extraction (including linktree)
 Step 5: Generate Scripts → Personalized outreach
 Step 6: Send Emails → Gmail automation
 ```

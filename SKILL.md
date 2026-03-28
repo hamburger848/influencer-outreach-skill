@@ -96,9 +96,9 @@ description: "KOL达人投放管理工作流 - 从产品话题生成到达人建
 
 **统一输出文件**：`DEFAULT_OUTPUT_PATH` 环境变量
 
-**标准执行流程**：
+**执行方式**：根据用户需求选择方案
 
-### 2.1 搜索达人
+### 方案A：关键词搜索达人
 
 根据步骤1确认的关键词，循环调用 `search_users` 搜索达人：
 
@@ -116,7 +116,30 @@ for keyword in keywords:
     )
 ```
 
-### 2.2 获取达人视频数据
+### 方案B：同类达人扩展
+
+基于已有关达列表，通过 `fetch_similar_user_recommendations` 搜索同类达人：
+
+```python
+from scripts.search.tikhub_client import TikHubClient
+client = TikHubClient()
+
+# 从 Excel 读取达人 sec_uid
+import pandas as pd
+df = pd.read_excel(excel_path)
+sec_uids = df['sec_uid'].dropna().unique()
+
+# 对每个达人获取同类推荐
+for sec_uid in sec_uids:
+    similar_users = client.fetch_similar_user_recommendations(
+        sec_uid=sec_uid,
+        output_path=output_path
+    )
+```
+
+**说明**：同类达人推荐可扩充达人池，覆盖更多潜在合作对象
+
+### 2.1 获取达人视频数据
 
 对每个达人调用 `fetch_kol_play_data` 获取5个视频的播放数据和内容话题：
 
@@ -143,7 +166,7 @@ for sec_uid in sec_uids:
 - 5个视频的文案
 - 内容话题标签（从 hashtag 提取）
 
-### 2.3 向用户确认
+### 2.2 向用户确认
 
 展示搜索到的达人数量和覆盖情况，请用户确认是否进入步骤3评分。
 
@@ -189,7 +212,7 @@ run_kol_analysis(output_path)
 
 ## 步骤 4：提取联系方式
 
-从达人签名中提取邮箱、Instagram、WhatsApp 等联系方式。
+从达人签名中提取邮箱、Instagram、WhatsApp 等联系方式。对于未提取到邮箱的达人，调用 `fetch_user_profile` 获取 `bio_url`（linktree 链接）。
 
 ```python
 from scripts.outreach.extract_email import extract_contact_with_ai
@@ -201,7 +224,10 @@ extract_contact_with_ai(excel_path)
 
 **输出**：同一文件中新增"联系方式"列
 
-**说明**：使用正则表达式自动识别邮箱、Instagram、WhatsApp 等联系方式，对于正则无法提取的联系信息，由你辅助补充提取
+**说明**：
+- 使用正则表达式自动识别邮箱、Instagram、WhatsApp 等联系方式
+- 对于正则无法提取的联系信息，由 LLM 辅助补充提取
+- **当未提取到邮箱时**：调用 `fetch_user_profile` 获取 `bio_url`（linktree 链接），可从 linktree 页面进一步提取邮箱
 
 ***
 

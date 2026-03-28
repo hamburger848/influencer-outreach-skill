@@ -525,6 +525,57 @@ class TikHubClient:
 
         return parsed_results
 
+    def fetch_user_profile(self, sec_uid: str = None, user_id: str = None,
+                           unique_id: str = None) -> Dict:
+        """
+        获取指定用户的信息
+
+        TikHub API: Get information of specified user
+        端点: GET /tiktok/app/v3/handler_user_profile
+
+        Args:
+            sec_uid: 用户sec_user_id（优先使用）
+            user_id: 用户uid，纯数字
+            unique_id: 用户unique_id（用户名）
+
+        Returns:
+            用户详细信息，包含以下链接字段：
+            - bio_url: 主页链接（如 linktree）
+            - ins_id: Instagram ID
+            - twitter_id: Twitter ID
+            - youtube_channel_id: YouTube 频道ID
+        """
+        params = {}
+        if sec_uid:
+            params["sec_user_id"] = sec_uid
+        elif user_id:
+            params["user_id"] = user_id
+        elif unique_id:
+            params["unique_id"] = unique_id
+        else:
+            raise ValueError("必须提供 sec_uid、user_id 或 unique_id 之一")
+
+        result = self._request("GET", "tiktok/app/v3/handler_user_profile", params)
+        data = result.get("data", {})
+        user = data.get("user", {})
+
+        return {
+            "uid": user.get("uid"),
+            "sec_uid": user.get("sec_uid"),
+            "unique_id": user.get("unique_id"),
+            "nickname": user.get("nickname"),
+            "signature": user.get("signature", ""),
+            "bio_url": user.get("bio_url", ""),
+            "ins_id": user.get("ins_id", ""),
+            "twitter_id": user.get("twitter_id", ""),
+            "youtube_channel_id": user.get("youtube_channel_id", ""),
+            "follower_count": user.get("follower_count", 0),
+            "following_count": user.get("following_count", 0),
+            "aweme_count": user.get("aweme_count", 0),
+            "total_favorited": user.get("total_favorited", 0),
+            "verified": user.get("verification_type", 0) > 0,
+        }
+
     def search_videos(self, keyword: str, offset: int = 0, count: int = 20,
                       sort_type: int = 0, publish_time: int = 0, region: str = "US",
                       output_path: str = None) -> Dict:
